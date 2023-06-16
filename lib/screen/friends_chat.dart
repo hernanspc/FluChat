@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class FriendsChat extends StatefulWidget {
   const FriendsChat({super.key});
@@ -10,6 +11,11 @@ class FriendsChat extends StatefulWidget {
 class _FriendsChatState extends State<FriendsChat> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My Chat'),
+      ),
+      body: Placeholder(),
+    );
   }
 }
