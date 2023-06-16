@@ -1,3 +1,4 @@
+import 'package:fluchat/constants/environment.dart';
 import 'package:fluchat/screen/home_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
@@ -12,10 +13,12 @@ class MainChatAppStream extends StatefulWidget {
 class _MainChatAppStreamState extends State<MainChatAppStream> {
   late StreamChatClient _client;
 
+  final api_key = Environment.theStreamApiKey;
   @override
   void initState() {
+    print('api_key:: $api_key');
     _client = StreamChatClient(
-      '6tcm7ns4yn35',
+      api_key,
       logLevel: Level.INFO,
     );
     super.initState();
