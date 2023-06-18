@@ -37,7 +37,9 @@ class _HomeChatState extends State<HomeChat> {
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => FriendsChat(),
+          builder: (_) => FriendsChat(
+            client: client,
+          ),
         ),
       );
     } else {
