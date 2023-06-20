@@ -24,7 +24,6 @@ class _HomeChatState extends State<HomeChat> {
         _loading = true;
       });
       final client = StreamChat.of(context).client;
-      final logToken = client.devToken(username);
 
       await client.connectUser(
         User(

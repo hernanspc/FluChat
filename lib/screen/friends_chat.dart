@@ -80,7 +80,6 @@ class _FriendsChatState extends State<FriendsChat> {
           'image': DataUtils.getChannelImage(),
         },
       );
-      await channel.watch();
       await channel.create();
     }
   }
