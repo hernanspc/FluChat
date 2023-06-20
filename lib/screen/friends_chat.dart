@@ -80,7 +80,17 @@ class _FriendsChatState extends State<FriendsChat> {
           'image': DataUtils.getChannelImage(),
         },
       );
+      // Crear el canal
       await channel.create();
+
+      // Inicializar el canal
+      await channel.watch();
+
+      // Obtener el usuario actual
+      final currentUser = StreamChat.of(context).currentUser;
+
+      // Agregar el usuario actual al canal
+      await channel.addMembers([currentUser!.id]);
     }
   }
 
