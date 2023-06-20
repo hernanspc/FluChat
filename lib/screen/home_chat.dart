@@ -2,6 +2,7 @@ import 'package:fluchat/data/data_utils.dart';
 import 'package:fluchat/screen/friends_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import 'package:stream_chat/stream_chat.dart';
 
 class HomeChat extends StatefulWidget {
   const HomeChat({super.key});
@@ -23,13 +24,17 @@ class _HomeChatState extends State<HomeChat> {
         _loading = true;
       });
       final client = StreamChat.of(context).client;
-      await client.connectGuestUser(
+      final logToken = client.devToken(username);
+
+      await client.connectUser(
         User(
           id: username,
           extraData: {
             'image': DataUtils.getUserImage(username),
+            'name': username,
           },
         ),
+        client.devToken(username).rawValue,
       );
       setState(() {
         _loading = false;

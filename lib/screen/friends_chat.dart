@@ -1,13 +1,13 @@
+import 'package:fluchat/data/data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class FriendsChat extends StatefulWidget {
-  // const FriendsChat({super.key,});
-
   const FriendsChat({
     Key? key,
     required this.client,
   }) : super(key: key);
+
   final StreamChatClient client;
 
   @override
@@ -30,11 +30,105 @@ class _FriendsChatState extends State<FriendsChat> {
     super.dispose();
   }
 
+  Future<List<String>> _listActiveUsers() async {
+    final response = await widget.client.queryUsers(
+      filter: Filter.and(
+        [
+          Filter.notEqual('id', StreamChat.of(context).currentUser!.id),
+        ],
+      ),
+    );
+    final List<String> userNames =
+        response.users.map((user) => user.name).toList();
+    return userNames;
+  }
+
+  Future<void> _onCreateChannel() async {
+    final result = await showDialog(
+        context: context,
+        builder: (context) {
+          final channelController = TextEditingController();
+
+          return AlertDialog(
+            title: Text('Create Channel'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Welcome to the Streaming Chat App!'),
+                TextField(
+                  controller: channelController,
+                  decoration: InputDecoration(
+                    hintText: 'Channel Name',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () =>
+                      Navigator.of(context).pop(channelController.text),
+                  child: Text('Save'),
+                )
+              ],
+            ),
+          );
+        });
+
+    if (result != null) {
+      final client = StreamChat.of(context).client;
+      final channel = client.channel(
+        'messaging',
+        id: result,
+        extraData: {
+          'image': DataUtils.getChannelImage(),
+        },
+      );
+      await channel.watch();
+      await channel.create();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: _onCreateChannel, label: Text('Create Channel')),
       appBar: AppBar(
-        title: Text('My Chat'),
+        title: const Text('Public Chat'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.group),
+            onPressed: () {
+              _listActiveUsers().then((userNames) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Active Users'),
+                      content: SizedBox(
+                        width: double.maxFinite,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: userNames.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              title: Text(userNames[index]),
+                            );
+                          },
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Close'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              });
+            },
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _controller.refresh,
@@ -49,14 +143,6 @@ class _FriendsChatState extends State<FriendsChat> {
               ),
             ),
           ),
-          itemBuilder: (context, channels, index, defaultTile) {
-            return ListTile(
-              tileColor: Colors.amberAccent,
-              title: Center(
-                child: StreamChannelName(channel: channels[index]),
-              ),
-            );
-          },
         ),
       ),
     );

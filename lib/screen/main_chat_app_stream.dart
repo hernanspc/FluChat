@@ -16,7 +16,6 @@ class _MainChatAppStreamState extends State<MainChatAppStream> {
   final api_key = Environment.theStreamApiKey;
   @override
   void initState() {
-    print('api_key:: $api_key');
     _client = StreamChatClient(
       api_key,
       logLevel: Level.INFO,
