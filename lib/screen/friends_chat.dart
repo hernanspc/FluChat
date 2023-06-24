@@ -78,6 +78,7 @@ class _FriendsChatState extends State<FriendsChat> {
         id: result,
         extraData: {
           'image': DataUtils.getChannelImage(),
+          'title': result, // Asignar el título del canal
         },
       );
 
@@ -158,6 +159,26 @@ class _FriendsChatState extends State<FriendsChat> {
               ),
             ),
           ),
+          itemBuilder: (context, items, index, defaultWidget) {
+            final channel = items[index];
+            final channelTitle = channel.extraData['title'];
+            print('channel $channelTitle');
+            return StreamChannelListTile(
+              channel: channel,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => StreamChannel(
+                      channel: channel,
+                      child: const ChannelName(),
+                    ),
+                  ),
+                );
+              },
+              title: Text('$channelTitle'),
+            );
+          },
         ),
       ),
     );
